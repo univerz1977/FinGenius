@@ -88,10 +88,15 @@ def fetch_stock_list_capital_flow(
             # 提取资金流向数据
             stock_list = data.get("data", {}).get("diff", [])
             if not stock_list:
-                print(f"未获取到个股资金流向数据 (第{attempt}次尝试)")
+                print(f"未获取到个股资金流向数据 (第{attempt}次尝试)。 URL={url}")
                 if attempt < max_retries:
                     time.sleep(retry_delay)
-                    continue
+                    # 等待人工确认
+                    print(f"是否继续重试？(y/n) [第{attempt+1}次尝试]")
+                    user_input = input().strip().lower()
+                    if user_input != 'y':
+                        print("用户选择放弃重试")
+                        continue
                 return None
 
             # 处理股票数据

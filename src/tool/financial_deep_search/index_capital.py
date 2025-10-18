@@ -82,7 +82,7 @@ def parse_jsonp(jsonp_str):
         return None
 
 
-def fetch_index_capital_flow(index_code="000001", max_retries=3, retry_delay=2):
+def fetch_index_capital_flow(index_code="000001", max_retries=13, retry_delay=2):
     """
     获取指数资金流向数据
 
@@ -128,9 +128,15 @@ def fetch_index_capital_flow(index_code="000001", max_retries=3, retry_delay=2):
             # 提取资金流向数据
             flow_data = data.get("data", {})
             if not flow_data:
-                print(f"未获取到指数资金流向数据 (第{attempt}次尝试)")
+                print(f"未获取到指数资金流向数据 (第{attempt}次尝试) URL={url}")
                 if attempt < max_retries:
                     time.sleep(retry_delay)
+                    # 等待人工确认
+                    print(f"是否继续重试？(y/n) [第{attempt+1}次尝试]")
+                    user_input = input().strip().lower()
+                    if user_input != 'y':
+                        print("用户选择放弃重试")
+                        break
                     continue
                 return None
 

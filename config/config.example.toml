@@ -26,6 +26,14 @@ temperature = 0.0                           # Controls randomness
 # max_tokens = 4096
 # temperature = 0.0
 
+# [llm.deepseek]
+# api_type = "openai"  # DeepSeek使用OpenAI兼容格式
+# model = "deepseek-chat"  # 或 "deepseek-coder", "deepseek-reasoner"
+# base_url = "https://api.deepseek.com/v1"  # DeepSeek API端点
+# api_key = "YOUR_DEEPSEEK_API_KEY"  # 你的DeepSeek API密钥
+# max_tokens = 8192
+# temperature = 0.0
+
 # Optional configuration for specific LLM models
 # [llm.vision]
 # model = "claude-3-7-sonnet-20250219"        # The vision model to use

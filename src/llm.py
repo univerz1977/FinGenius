@@ -31,7 +31,7 @@ from src.schema import (
 
 
 # 推理模型列表 - 这些模型使用不同的参数格式
-REASONING_MODELS = ["o1", "o3-mini", "deepseek-r1"]
+REASONING_MODELS = ["o1", "o3-mini", "deepseek-r1", "deepseek-reasoner"]
 
 # 检查是否为推理模型的函数
 def is_reasoning_model(model_name: str) -> bool:
@@ -45,7 +45,7 @@ def is_reasoning_model(model_name: str) -> bool:
     
     # 模糊匹配推理模型模式
     reasoning_patterns = [
-        "o1", "o3", "deepseek-r1", "qwen-r1", 
+        "o1", "o3", "deepseek-r1", "deepseek-reasoner", "qwen-r1",
         "reasoning", "think", "cot"  # Chain of Thought
     ]
     
@@ -400,11 +400,15 @@ class LLM:
                 params["max_completion_tokens"] = self.max_tokens
                 logger.info(f"Using reasoning model parameters: max_completion_tokens={self.max_tokens}")
             else:
-                # 标准模型参数
+                # 标准模型参数 - 包括DeepSeek API
                 params["max_tokens"] = self.max_tokens
                 params["temperature"] = (
                     temperature if temperature is not None else self.temperature
                 )
+                
+                # DeepSeek API特殊处理（如果需要）
+                if "deepseek" in self.base_url.lower():
+                    logger.info(f"Using DeepSeek API with standard OpenAI parameters")
 
             if not stream:
                 # Non-streaming request
@@ -572,6 +576,10 @@ class LLM:
                 params["temperature"] = (
                     temperature if temperature is not None else self.temperature
                 )
+                
+                # DeepSeek API特殊处理
+                if "deepseek" in self.base_url.lower():
+                    logger.info(f"Using DeepSeek API with image support")
 
             # Handle non-streaming request
             if not stream:
@@ -720,6 +728,10 @@ class LLM:
                 params["temperature"] = (
                     temperature if temperature is not None else self.temperature
                 )
+                
+                # DeepSeek API特殊处理
+                if "deepseek" in self.base_url.lower():
+                    logger.info(f"Using DeepSeek API with tool calling support")
 
             response = await self.client.chat.completions.create(**params)
 

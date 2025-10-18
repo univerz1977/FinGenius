@@ -2,6 +2,7 @@ import json
 import time
 import traceback
 from datetime import datetime
+import random
 
 import requests
 
@@ -30,7 +31,8 @@ def parse_jsonp(jsonp_str):
     return None
 
 
-def fetch_data(sector_type, url, max_retries=3, retry_delay=2):
+def fetch_data(sector_type, url, max_retries=50, retry_delay=2):
+    print(f"尝试获取{sector_type}数据。。。 URL={url}")
     for attempt in range(1, max_retries + 1):
         try:
             resp = requests.get(url, headers=HEADERS, timeout=15)
@@ -41,9 +43,15 @@ def fetch_data(sector_type, url, max_retries=3, retry_delay=2):
                 return []
             return data.get("data", {}).get("diff", [])
         except Exception as e:
-            print(f"获取{sector_type}数据失败: {e} (第{attempt}次尝试)")
+            print(f"获取{sector_type}数据失败: {e} (第{attempt}次尝试)。URL={url}")
             if attempt < max_retries:
                 time.sleep(retry_delay)
+                # 等待人工确认
+                print(f"是否继续重试？(y/n) [第{attempt+1}次尝试]")
+                user_input = input().strip().lower()
+                if user_input != 'y':
+                    print("用户选择放弃重试")
+                    return []
             else:
                 return []
 
@@ -111,9 +119,15 @@ def get_all_section(sector_types=None):
         for sector_type in valid_types:
             url = API_URLS[sector_type]
             raw_list = fetch_data(sector_type, url)
-            all_data[sector_type] = [
-                simplify_sector_item(item) for item in raw_list if item
-            ]
+            if raw_list is not None:
+                all_data[sector_type] = [
+                    simplify_sector_item(item) for item in raw_list if item
+                ]
+            else:
+                all_data[sector_type] = []
+            #随机等待几秒，避免服务器反爬虫
+            print("随机等待几秒。。。")
+            time.sleep(random.uniform(3, 8))
 
         # 准备返回结果
         result = {

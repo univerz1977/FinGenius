@@ -141,20 +141,32 @@ FinGenius 需要配置使用的 LLM API，请按以下步骤设置：
 2. 编辑 `config/config.toml` 添加 API 密钥和自定义设置：
 
    ```toml
-   # 全局 LLM 配置
+   # 全局 LLM 配置 - 支持多种API提供商
    [llm]
-   model = "gpt-4o"
-   base_url = "https://api.openai.com/v1"
+   api_type = "openai"  # API类型：openai, azure, ollama
+   model = "deepseek-chat"  # 推荐使用DeepSeek，性价比高
+   base_url = "https://api.deepseek.com/v1"  # DeepSeek API端点
    api_key = "sk-..."  # 替换为真实 API 密钥
-   max_tokens = 4096
+   max_tokens = 8192
    temperature = 0.0
 
    # 可选特定 LLM 模型配置
    [llm.vision]
-   model = "gpt-4o"
-   base_url = "https://api.openai.com/v1"
+   model = "deepseek-chat"  # 视觉模型配置
+   base_url = "https://api.deepseek.com/v1"
    api_key = "sk-..."  # 替换为真实 API 密钥
    ```
+
+### 支持的 API 提供商
+
+FinGenius 支持多种大模型 API 提供商：
+
+- **DeepSeek API**（推荐）：性价比高，中文理解优秀
+- **OpenAI 兼容 API**：支持 Anthropic Claude 等
+- **Azure OpenAI**：企业级部署
+- **Ollama**：本地部署模型
+
+详细配置说明请参考 [DeepSeek 集成指南](docs/deepseek_integration.md)。
 
 ## 使用方法
 
